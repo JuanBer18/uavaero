@@ -1,0 +1,231 @@
+<title>Airframe Screen Specification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════════════════
+   CURRENT PHASE 1 SCREEN — Cobalt Retro visual system.
+
+   The existing screen layout remains until a new layout is selected. Its visual language is now
+   the chosen Cobalt Technical palette with retro-instrument control shapes, compact monospace
+   typography, and text-only controls. Light and dark themes share the same hierarchy.
+
+   This file is the specification the Qt screen is built against, not a sketch. The token
+   block below is the source of app/style.py's palette; the rules at the foot of the page
+   are the ones the implementation has to honour.
+   ═══════════════════════════════════════════════════════════════════════════════════════ */
+:root{
+  --ground:#f2f5fb;      /* window ground */
+  --surface:#ffffff;     /* panels and cards */
+  --inset:#e7ecf7;       /* the drawing well */
+  --rule:#cbd3e7;        /* structural rule */
+  --rule-strong:#aebcdf; /* stronger separation */
+  --ink:#1a2650;         /* primary text and aircraft */
+  --ink-2:#4f5f8b;       /* labels */
+  --ink-3:#7582a7;       /* units, captions, inactive */
+  --accent:#5778df;      /* selection, derived values, primary action */
+  --accent-dim:rgba(87,120,223,.11);
+  --title:#273b80;
+  --good:#247a68;
+  --warn:#b94f58;
+  --ui:"Cascadia Mono","IBM Plex Mono","Consolas",monospace;
+  --mono:var(--ui);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--ui); font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:52px 26px 100px;}
+.eyebrow{font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--accent); margin:0 0 12px;}
+h1{font-size:clamp(32px,4.6vw,50px); line-height:1.02; font-weight:800; margin:0 0 18px;
+  letter-spacing:-.032em; text-wrap:balance;}
+.standfirst{font-size:17px; color:var(--ink-2); max-width:64ch; margin:0 0 36px;}
+.standfirst strong{color:var(--ink); font-weight:600;}
+
+/* ══ THE SCREEN ═══════════════════════════════════════════════════════════════════════ */
+.app{
+  background:var(--ground); border:2px solid var(--rule-strong);
+  aspect-ratio:16/10; display:flex; flex-direction:column; overflow:hidden;
+  font-size:12px; line-height:1.35; container-type:inline-size;
+}
+.chrome{
+  flex:none; height:46px; background:var(--title); border-bottom:3px double var(--accent);
+  display:flex; align-items:center; gap:16px; padding:0 16px;
+}
+.chrome .name{font-size:15px; color:#fff; font-weight:800; letter-spacing:-.03em; text-transform:uppercase;}
+.chrome .doc{font-family:var(--mono); font-size:11px; color:#c8d3f3;}
+.chrome .sp{flex:1;}
+.chrome .btn{font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:#e4e9fb; background:#20346f; border:1px solid #8fa3e5; border-radius:11px; padding:5px 11px;}
+.chrome .btn.primary{color:#fff; background:var(--accent); border-color:var(--accent);}
+
+.stage{flex:1; display:flex; min-height:0; position:relative;}
+.view{flex:1; position:relative; background:var(--inset); min-width:0; min-height:0; overflow:hidden;}
+.view svg{width:100%; height:100%; display:block;}
+.cap{position:absolute; left:16px; top:13px; font-size:11px; font-weight:700; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3);}
+
+/* the selection card — compact rounded instrument panel */
+.card{position:absolute; right:4.5%; top:8%; background:var(--surface); border:2px solid var(--rule-strong); border-radius:14px; overflow:hidden;}
+.card > header{background:var(--title); color:#fff; padding:6px 12px; display:flex;
+  align-items:center;}
+.card > header .t{font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;}
+.card > header .x{margin-left:auto; font-weight:700;}
+.card-body{padding:13px; display:flex; flex-direction:column; gap:9px;}
+
+/* entered values are compact instrument fields; calculated values remain read-only */
+.f{display:flex; align-items:baseline; gap:10px;}
+.f label{flex:1; color:var(--ink-2); font-size:12px; font-weight:500; white-space:nowrap;}
+.f .in{font-family:var(--mono); font-size:11.5px; text-align:right; min-width:66px; padding:3px 7px;
+  color:var(--ink); background:var(--ground); border:1px solid var(--rule-strong); border-radius:9px; font-variant-numeric:tabular-nums;}
+.f .in.text{text-align:left; min-width:92px;}
+.f.live .in{border:2px solid var(--accent); color:var(--accent);}
+.f .u{font-family:var(--mono); font-size:10px; color:var(--ink-3); width:22px; flex:none;}
+.r{display:flex; align-items:baseline; gap:10px;}
+.r label{flex:1; color:var(--ink-3); font-size:12px;}
+.r .v{font-family:var(--mono); font-size:11.5px; color:var(--accent); font-variant-numeric:tabular-nums;}
+.r .u{font-family:var(--mono); font-size:10px; color:var(--ink-3); width:22px; flex:none;}
+.grp{font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-2); border-top:2px solid var(--rule); padding-top:8px; margin-top:2px;}
+
+/* full-width segmented footer — nothing floats over the drawing */
+.footer{flex:none; display:flex; height:46px; border-top:2px solid var(--rule-strong);
+  background:var(--surface);}
+.footer .chips{flex:1; display:flex;}
+.footer .chips span{flex:1; display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-3); border-right:2px solid var(--rule);}
+.footer .chips span.on{background:var(--accent); color:var(--ground);}
+.footer .chips span.add{color:var(--ink-3); font-weight:500;}
+.footer .readout{flex:0 0 40%; display:flex; align-items:center; gap:22px; padding:0 16px;
+  font-family:var(--mono); font-size:10.5px; color:var(--ink-3);
+  font-variant-numeric:tabular-nums; border-left:2px solid var(--rule-strong);}
+.footer .readout b{color:var(--accent); font-weight:500;}
+
+/* ══ spec notes ═══════════════════════════════════════════════════════════════════════ */
+.spec{margin-top:56px; border-top:2px solid var(--rule-strong); padding-top:30px;}
+.spec h2{font-size:24px; font-weight:800; letter-spacing:-.025em; margin:0 0 20px;}
+.rules{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:0;
+  border:2px solid var(--rule);}
+.rules > div{padding:16px 18px; border-right:2px solid var(--rule); border-bottom:2px solid var(--rule);}
+.rules h3{font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent); margin:0 0 8px;}
+.rules p{margin:0; font-size:13.5px; color:var(--ink-2); line-height:1.55;}
+.rules code{font-family:var(--mono); font-size:12.5px; color:var(--ink);}
+
+.tokens{margin-top:28px; border:2px solid var(--rule); overflow-x:auto;}
+.tokens table{border-collapse:collapse; width:100%; min-width:520px;}
+.tokens th{font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-3); text-align:left; padding:11px 16px; border-bottom:2px solid var(--rule);}
+.tokens td{padding:9px 16px; font-size:13px; color:var(--ink-2); border-bottom:1px solid var(--rule);}
+.tokens tr:last-child td{border-bottom:0;}
+.tokens td.k{font-family:var(--mono); font-size:12px; color:var(--ink);}
+.tokens td.hex{font-family:var(--mono); font-size:12px; color:var(--accent);}
+.tokens .chip{display:inline-block; width:26px; height:14px; border:1px solid var(--rule-strong);
+  vertical-align:middle; margin-right:9px;}
+@container (max-width: 620px){ .app{font-size:10px;} }
+</style>
+
+<div class="wrap">
+
+  <p class="eyebrow">Phase 1 · Cobalt Retro visual update</p>
+  <h1>Airframe Screen Specification</h1>
+  <p class="standfirst">
+    Cobalt Technical in a retro-instrument style. <strong>White and blue in light mode, indigo and
+    blue in dark mode, compact rounded text-only controls, and no decorative icons.</strong> This
+    preserves the current Phase 1 layout while the replacement layout is still being selected.
+  </p>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <g id="geo">
+      <polygon points="-1,-25 -5,-10 -5.5,30 -2.5,70 -0.75,100 0.75,100 2.5,70 5.5,30 5,-10 1,-25"/>
+      <polygon points="-120,4.19 0,0 120,4.19 120,24.19 0,30 -120,24.19"/>
+      <polygon points="-35,90 35,90 35,102 0,106 -35,102"/>
+      <polygon points="-1.6,90 1.6,90 1.6,106 -1.6,106"/>
+      <line x1="-120" y1="14.19" x2="120" y2="14.19" stroke-dasharray="5 4" opacity=".5"/>
+    </g>
+    <polygon id="wing" points="-120,4.19 0,0 120,4.19 120,24.19 0,30 -120,24.19"/>
+  </defs></svg>
+
+  <div class="app">
+    <div class="chrome">
+      <span class="name">uavaero</span><span class="doc">skywalker-x8.yaml</span>
+      <span class="sp"></span>
+      <span class="btn">Open in OpenVSP</span><span class="btn">Save</span><span class="btn primary">Solve</span>
+    </div>
+
+    <div class="stage">
+      <div class="view">
+        <span class="cap">Plan · wing</span>
+        <svg viewBox="-150 -40 300 164">
+          <g stroke="#1a2650" stroke-width="1.1" fill="none"><use href="#geo"/></g>
+          <line x1="55.9" y1="1.95" x2="55.9" y2="27.3" stroke="#5778df" stroke-width="1.6"/>
+          <circle cx="0" cy="8.5" r="3.4" fill="none" stroke="#5778df" stroke-width="1.6"/>
+          <use href="#wing" fill="rgba(87,120,223,.08)" stroke="#5778df" stroke-width="3"/>
+          <line x1="90" y1="17" x2="112" y2="-17" stroke="#5778df" stroke-width="1"/>
+        </svg>
+
+        <div class="card">
+          <header><span class="t">Wing</span><span class="x">×</span></header>
+          <div class="card-body">
+            <div class="f live"><label>Span</label><span class="in">2.400</span><span class="u">m</span></div>
+            <div class="f"><label>Aspect ratio</label><span class="in">9.60</span><span class="u"></span></div>
+            <div class="f"><label>Taper</label><span class="in">0.667</span><span class="u"></span></div>
+            <div class="f"><label>Sweep</label><span class="in">2.00</span><span class="u">°</span></div>
+            <div class="f"><label>Dihedral</label><span class="in">3.0</span><span class="u">°</span></div>
+            <div class="f"><label>Tip twist</label><span class="in">−2.0</span><span class="u">°</span></div>
+            <div class="f"><label>Root airfoil</label><span class="in text">naca2412</span></div>
+            <div class="f"><label>Tip airfoil</label><span class="in text">naca2412</span></div>
+            <div class="grp">Worked out</div>
+            <div class="r"><label>Area</label><span class="v">0.6000</span><span class="u">m²</span></div>
+            <div class="r"><label>Root chord</label><span class="v">0.3000</span><span class="u">m</span></div>
+            <div class="r"><label>Tip chord</label><span class="v">0.2000</span><span class="u">m</span></div>
+            <div class="r"><label>MAC</label><span class="v">0.2533</span><span class="u">m</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="chips">
+        <span class="on">Wing</span><span>H-tail</span><span>V-tail</span>
+        <span>Fuselage</span><span>Controls</span><span class="add">+ Fin</span>
+      </div>
+      <div class="readout">
+        <span>V<sub>h</sub> <b>0.567</b></span><span>V<sub>v</sub> <b>0.021</b></span>
+        <span>CG <b>25.7</b>%</span><span>Re <b>346 877</b></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <h2>Rules the implementation honours</h2>
+    <div class="rules">
+      <div><h3>Retro instrument shapes</h3><p>Compact rounded buttons and fields use crisp borders, restrained radii and no shadow. Controls remain text-only.</p></div>
+      <div><h3>Fields show their role</h3><p>Editable values sit in compact wells; calculated values are unboxed and blue. This distinction remains visible as parameterisation adapts automatically.</p></div>
+      <div><h3>Cobalt means interaction</h3><p>Selection, calculated values, focus, and the primary action. Warning and valid design states retain separate semantic colours.</p></div>
+      <div><h3>Nothing floats over the drawing</h3><p>Except the selection card, which is anchored to the selected part by a leader line. Chips and readout live in the footer bar.</p></div>
+      <div><h3>Inputs adapt automatically</h3><p>The app infers a compatible driver set from what you enter, calculates the remaining values, and reports under- or over-constrained geometry without a mode selector.</p></div>
+      <div><h3>The drawing never scrolls</h3><p>It fills its space at all times. Card content may scroll internally when a component has many fields.</p></div>
+    </div>
+
+    <div class="tokens">
+      <table>
+        <thead><tr><th>Token</th><th>Value</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td class="k">ground</td><td class="hex"><span class="chip" style="background:#f2f5fb"></span>#f2f5fb</td><td>Window ground</td></tr>
+          <tr><td class="k">surface</td><td class="hex"><span class="chip" style="background:#ffffff"></span>#ffffff</td><td>Footer and selection card</td></tr>
+          <tr><td class="k">inset</td><td class="hex"><span class="chip" style="background:#e7ecf7"></span>#e7ecf7</td><td>The drawing well</td></tr>
+          <tr><td class="k">title</td><td class="hex"><span class="chip" style="background:#273b80"></span>#273b80</td><td>Chrome and card headers</td></tr>
+          <tr><td class="k">rule</td><td class="hex"><span class="chip" style="background:#cbd3e7"></span>#cbd3e7</td><td>Structural rules and control borders</td></tr>
+          <tr><td class="k">ink</td><td class="hex"><span class="chip" style="background:#1a2650"></span>#1a2650</td><td>Primary text and aircraft</td></tr>
+          <tr><td class="k">accent</td><td class="hex"><span class="chip" style="background:#5778df"></span>#5778df</td><td>Selection, calculated values and primary action</td></tr>
+          <tr><td class="k">good / warn</td><td class="hex"><span class="chip" style="background:#247a68"></span>#247a68&nbsp; <span class="chip" style="background:#b94f58"></span>#b94f58</td><td>Design state only, never interaction</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

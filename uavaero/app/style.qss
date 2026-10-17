@@ -1,0 +1,269 @@
+/* Cobalt Technical / Retro Instrument.
+   Text-only controls, compact monospace typography, rounded instrument shapes. */
+
+QWidget {{
+    background: {ground};
+    color: {ink};
+}}
+
+QToolTip {{
+    background: {surface};
+    color: {ink};
+    border: 2px solid {rule_strong};
+    padding: 4px 7px;
+}}
+
+/* ── the chrome band ─────────────────────────────────────────────────────────────────── */
+#ChromeBar {{
+    background: {title};
+    border: none;
+    border-bottom: 3px double {accent};
+}}
+#AppName {{
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    text-transform: uppercase;
+    color: #ffffff;
+}}
+#DocName {{
+    color: #c8d3f3;
+}}
+
+/* Compact, text-only instrument controls. */
+QPushButton[chrome="true"] {{
+    background: #20346f;
+    border: 1px solid #8fa3e5;
+    border-radius: 11px;
+    padding: 5px 11px;
+    margin-left: 14px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #e4e9fb;
+}}
+QPushButton[chrome="true"]:hover {{
+    color: #ffffff;
+    border-color: #ffffff;
+}}
+QPushButton[chrome="true"][primary="true"] {{
+    background: {accent};
+    color: {accent_ink};
+    border-color: {accent};
+}}
+QPushButton[chrome="true"]:disabled {{
+    color: {rule};
+    border-bottom-color: transparent;
+}}
+
+/* ── the drawing well ────────────────────────────────────────────────────────────────── */
+#PlanformView {{
+    background: {inset};
+    border: none;
+}}
+#ViewCaption {{
+    color: {ink_3};
+    font-size: 11px;
+    font-weight: 700;
+    background: transparent;
+}}
+
+/* ── the selection card ──────────────────────────────────────────────────────────────── */
+#SelectionCard {{
+    background: {surface};
+    border: 2px solid {rule_strong};
+    border-radius: 14px;
+}}
+#CardHeader {{
+    background: {title};
+    border: none;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}}
+#CardTitle {{
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    background: transparent;
+}}
+#CardClose {{
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-weight: 800;
+    padding: 0 2px;
+}}
+#CardClose:hover {{
+    color: {accent};
+}}
+#CardBody {{
+    background: {surface};
+}}
+#CardBody QLabel {{
+    background: transparent;
+}}
+
+/* ── compact instrument fields ──────────────────────────────────────────────────────── */
+QLabel[role="field"] {{
+    color: {ink_2};
+    font-size: 12px;
+    font-weight: 500;
+    background: transparent;
+}}
+QLabel[role="unit"] {{
+    color: {ink_3};
+    font-size: 10px;
+    background: transparent;
+}}
+QLineEdit {{
+    background: {ground};
+    border: 1px solid {rule_strong};
+    border-radius: 9px;
+    padding: 3px 7px;
+    color: {ink};
+    selection-background-color: {accent};
+    selection-color: {ground};
+}}
+QLineEdit:hover {{
+    border-color: {accent};
+}}
+QLineEdit:focus {{
+    border: 2px solid {accent};
+    color: {accent};
+}}
+QLineEdit[invalid="true"] {{
+    border: 2px solid {warn};
+    color: {warn};
+}}
+
+QComboBox {{
+    background: {ground};
+    border: 1px solid {rule_strong};
+    border-radius: 9px;
+    padding: 3px 7px;
+    color: {ink};
+}}
+QComboBox:hover {{ border-color: {accent}; }}
+QComboBox:focus {{ border: 2px solid {accent}; color: {accent}; }}
+QComboBox::drop-down {{ border: none; width: 14px; }}
+QComboBox::down-arrow {{ image: none; }}
+QComboBox QAbstractItemView {{
+    background: {surface};
+    border: 2px solid {rule_strong};
+    border-radius: 9px;
+    color: {ink};
+    selection-background-color: {accent};
+    selection-color: {ground};
+    outline: none;
+}}
+
+/* Derived values: no rule beneath, amber. The screen's most important distinction. */
+QLabel[role="derived-label"] {{
+    color: {ink_3};
+    font-size: 12px;
+    background: transparent;
+}}
+QLabel[role="derived"] {{
+    color: {accent};
+    background: transparent;
+}}
+QLabel[role="group"] {{
+    color: {ink_2};
+    font-size: 10px;
+    font-weight: 800;
+    background: transparent;
+    border-top: 2px solid {rule};
+    padding-top: 7px;
+    margin-top: 2px;
+}}
+
+/* ── the footer: full-width segmented chips, then the readout ────────────────────────── */
+#FooterBar {{
+    background: {surface};
+    border: none;
+    border-top: 2px solid {rule_strong};
+}}
+QPushButton[chip="true"], QToolButton[chip="true"] {{
+    background: {surface};
+    border: 1px solid {rule};
+    border-radius: 10px;
+    margin: 5px 3px;
+    color: {ink_3};
+    font-size: 11px;
+    font-weight: 700;
+    padding: 0 10px;
+}}
+QPushButton[chip="true"]:hover, QToolButton[chip="true"]:hover {{
+    color: {ink};
+}}
+QPushButton[chip="true"]:checked, QToolButton[chip="true"]:checked {{
+    background: {accent};
+    color: {accent_ink};
+    border-color: {accent};
+}}
+QPushButton[chip="true"][add="true"], QToolButton[chip="true"][add="true"] {{
+    color: {ink_3};
+    font-weight: 500;
+}}
+#ReadoutStrip {{
+    background: {surface};
+    border: none;
+    border-left: 2px solid {rule_strong};
+}}
+QLabel[role="readout-label"] {{
+    color: {ink_3};
+    background: transparent;
+}}
+QLabel[role="readout-value"] {{
+    color: {accent};
+    background: transparent;
+}}
+QLabel[role="readout-value"][state="good"] {{ color: {good}; }}
+QLabel[role="readout-value"][state="warn"] {{ color: {warn}; }}
+
+/* ── scrollbars: rules, not lozenges ─────────────────────────────────────────────────── */
+QScrollBar:vertical {{
+    background: {surface};
+    width: 10px;
+    margin: 0;
+    border-left: 2px solid {rule};
+}}
+QScrollBar::handle:vertical {{
+    background: {rule_strong};
+    min-height: 24px;
+    border-radius: 5px;
+}}
+QScrollBar::handle:vertical:hover {{ background: {ink_3}; }}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{ height: 0; }}
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {{ background: transparent; }}
+QScrollArea {{ border: none; background: transparent; }}
+
+/* ── menus and dialogs ───────────────────────────────────────────────────────────────── */
+QMenuBar {{ background: {surface}; color: {ink_2}; border-bottom: 2px solid {rule}; }}
+QMenuBar::item {{ background: transparent; padding: 4px 10px; }}
+QMenuBar::item:selected {{ background: {accent}; color: {ground}; }}
+QMenu {{ background: {surface}; border: 2px solid {rule_strong}; color: {ink}; }}
+QMenu::item {{ padding: 5px 22px 5px 14px; }}
+QMenu::item:selected {{ background: {accent}; color: {ground}; }}
+QMenu::separator {{ height: 2px; background: {rule}; margin: 4px 0; }}
+
+QDialog {{ background: {ground}; }}
+QMessageBox {{ background: {ground}; }}
+QMessageBox QLabel {{ background: transparent; color: {ink}; }}
+QMessageBox QPushButton, QDialog QPushButton {{
+    background: {surface};
+    border: 2px solid {rule_strong};
+    border-radius: 11px;
+    padding: 5px 16px;
+    color: {ink};
+    font-weight: 600;
+}}
+QMessageBox QPushButton:hover, QDialog QPushButton:hover {{
+    border-color: {accent};
+    color: {accent};
+}}
+QInputDialog QLineEdit {{ min-width: 240px; }}
+
+QStatusBar {{ background: {surface}; color: {ink_3}; border-top: 2px solid {rule}; }}
+QSplitter::handle {{ background: {rule}; }}
+QSplitter::handle:horizontal {{ width: 2px; }}
+QSplitter::handle:vertical {{ height: 2px; }}

@@ -1,0 +1,28 @@
+# Disposable solver output: meshes, logs, raw VSPAERO artefacts. Regenerable by definition —
+# if deleting this loses something, that something was in the wrong place.
+.runs/
+
+# The result cache. Losing it costs solve time, never information.
+.cache/
+
+# Shared with the sibling Software/ tree via uavaero/paths.py unless a local copy is dropped here.
+# Both are large, downloaded rather than authored, and need their own backup.
+external/
+data/
+
+# Saved airframes are the user's work, not the repo's.
+airframes/
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# OpenVSP writes its analysis artefacts beside the .vsp3 it was given, and names them after the
+# model. An in-process ParasiteDrag or CompGeom run with no workdir therefore drops these in
+# whatever the CWD is — the repo root, when the suite is run from here. Regenerable, and three of
+# them were committed by accident before this line existed.
+Unnamed*.csf
+Unnamed*.vkey
+Unnamed*.vspgeom
+Unnamed*.csv
+Unnamed*.txt

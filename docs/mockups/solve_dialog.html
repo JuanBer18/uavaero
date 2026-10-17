@@ -1,0 +1,386 @@
+<title>Solve Setup Dialog</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --ground: #f2f5fb;  --surface: #ffffff; --inset: #e7ecf7;
+    --rule: #cbd3e7;    --rule-strong: #aebcdf;
+    --ink: #1a2650;     --ink-2: #4f5f8b;   --ink-3: #7582a7;
+    --accent: #5778df;  --accent-dim: #e4e9fb; --accent-ink: #ffffff;
+    --good: #247a68;    --warn: #b94f58;
+    --shadow: 0 18px 44px rgba(26, 38, 80, .18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #101426; --surface: #151a2b; --inset: #252d49;
+      --rule: #343d60;   --rule-strong: #48557c;
+      --ink: #e0e5f7;    --ink-2: #a8b3d1;  --ink-3: #7f8baa;
+      --accent: #6f8cff; --accent-dim: #232d53; --accent-ink: #0d1221;
+      --good: #64c7ad;   --warn: #ef7780;
+      --shadow: 0 18px 44px rgba(0, 0, 0, .55);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #101426; --surface: #151a2b; --inset: #252d49;
+    --rule: #343d60;   --rule-strong: #48557c;
+    --ink: #e0e5f7;    --ink-2: #a8b3d1;  --ink-3: #7f8baa;
+    --accent: #6f8cff; --accent-dim: #232d53; --accent-ink: #0d1221;
+    --good: #64c7ad;   --warn: #ef7780;
+    --shadow: 0 18px 44px rgba(0, 0, 0, .55);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--ground); color: var(--ink);
+    font-family: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
+    font-size: 13px; line-height: 1.5; margin: 0; padding: 28px 20px 56px;
+  }
+  .wrap { max-width: 1020px; margin: 0 auto; display: flex; flex-direction: column; gap: 26px; }
+
+  .preamble { display: flex; flex-direction: column; gap: 9px; max-width: 68ch; }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: .13em; font-size: 10px;
+    font-weight: 700; color: var(--ink-3);
+  }
+  h1 { font-size: 21px; font-weight: 700; margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+  .preamble p { margin: 0; color: var(--ink-2); }
+
+  /* ── the dialog ─────────────────────────────────────────────── */
+  .stage {
+    background: var(--inset); border: 1px solid var(--rule); border-radius: 4px;
+    padding: 34px 26px; display: flex; justify-content: center;
+  }
+  .dialog {
+    width: 100%; max-width: 660px; background: var(--surface);
+    border: 1px solid var(--rule-strong); border-radius: 6px;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .titlebar {
+    background: var(--accent); color: var(--accent-ink);
+    padding: 0 14px; height: 34px; display: flex; align-items: center;
+    justify-content: space-between; font-weight: 700; font-size: 11px;
+    letter-spacing: .1em; text-transform: uppercase;
+  }
+  .titlebar .x { opacity: .75; font-weight: 400; font-size: 15px; }
+
+  .segments { display: flex; border-bottom: 2px solid var(--rule-strong); background: var(--surface); }
+  .seg {
+    flex: 1; appearance: none; border: 0; border-right: 1px solid var(--rule);
+    background: var(--surface); color: var(--ink-3);
+    font: inherit; font-weight: 700; font-size: 11px; letter-spacing: .06em;
+    padding: 10px 6px; cursor: pointer; text-transform: uppercase;
+  }
+  .seg:last-child { border-right: 0; }
+  .seg[aria-selected="true"] { background: var(--accent-dim); color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }
+  .seg:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+
+  .panel { padding: 16px 18px 4px; display: none; flex-direction: column; gap: 3px; }
+  .panel[data-active] { display: flex; }
+
+  .grouplabel {
+    text-transform: uppercase; letter-spacing: .12em; font-size: 9.5px; font-weight: 700;
+    color: var(--ink-3); border-top: 2px solid var(--rule-strong);
+    padding-top: 9px; margin-top: 11px;
+  }
+  .grouplabel:first-child { border-top: 0; margin-top: 0; padding-top: 0; }
+
+  .row { display: flex; align-items: center; gap: 10px; min-height: 27px; }
+  .row .name { flex: 1; color: var(--ink-2); }
+  .row .unit { width: 26px; color: var(--ink-3); font-size: 11px; }
+  .box {
+    width: 116px; text-align: right; padding: 3px 8px;
+    border: 1px solid var(--rule); border-radius: 9px;
+    background: var(--surface); color: var(--ink);
+    font-variant-numeric: tabular-nums; font-weight: 500;
+  }
+  .box.choice { text-align: left; width: 168px; }
+  .box.wide { width: 168px; }
+  .box.blank { color: var(--ink-3); }
+  .readout { width: 116px; text-align: right; color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 600; }
+
+  .hint { color: var(--ink-3); font-size: 11px; padding: 1px 0 5px; }
+
+  .banner {
+    display: flex; gap: 9px; align-items: flex-start;
+    background: var(--accent-dim); border-left: 3px solid var(--warn);
+    padding: 9px 11px; margin: 10px 0 2px; font-size: 11.5px; color: var(--ink-2);
+  }
+  .banner .lead { color: var(--warn); font-weight: 700; white-space: nowrap; }
+  .banner button {
+    appearance: none; border: 1px solid var(--accent); background: var(--surface);
+    color: var(--accent); font: inherit; font-size: 10.5px; font-weight: 700;
+    padding: 2px 9px; border-radius: 9px; cursor: pointer; white-space: nowrap;
+  }
+
+  .footer {
+    display: flex; align-items: center; gap: 12px;
+    border-top: 2px solid var(--rule-strong); background: var(--inset);
+    padding: 11px 14px; margin-top: 12px;
+  }
+  .cost { flex: 1; color: var(--ink-2); font-size: 11.5px; }
+  .cost b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .btn {
+    appearance: none; font: inherit; font-weight: 700; font-size: 11.5px;
+    padding: 5px 15px; border-radius: 11px; cursor: pointer;
+    border: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink-2);
+  }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ── notes ──────────────────────────────────────────────────── */
+  .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(272px, 1fr)); gap: 14px; }
+  .note {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 4px;
+    padding: 13px 15px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .note h3 { margin: 0; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--accent); }
+  .note p { margin: 0; color: var(--ink-2); font-size: 12px; }
+  .note code { background: var(--inset); padding: 1px 4px; border-radius: 3px; color: var(--ink); font-size: 11.5px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="preamble">
+    <div class="eyebrow">Specification · built 2026-09-02</div>
+    <h1>Solve setup</h1>
+    <p>
+      One dialog for every run. It opens on Solve, shows every input the solver will actually
+      receive, and states what the run will cost before it starts. Built as drawn — this stays as
+      the thing the Qt dialog is checked against.
+    </p>
+  </header>
+
+  <div class="stage">
+    <div class="dialog">
+      <div class="titlebar"><span>Solve — new-airframe</span><span class="x">×</span></div>
+
+      <div class="segments" role="tablist">
+        <button class="seg" role="tab" aria-selected="true" data-tab="sweep">Alpha sweep</button>
+        <button class="seg" role="tab" aria-selected="false" data-tab="speed">Speed sweep</button>
+        <button class="seg" role="tab" aria-selected="false" data-tab="stab">Stability</button>
+        <button class="seg" role="tab" aria-selected="false" data-tab="cg">CG sweep</button>
+        <button class="seg" role="tab" aria-selected="false" data-tab="dyn">Dynamics</button>
+      </div>
+
+      <!-- ───── alpha sweep ───── -->
+      <div class="panel" data-panel="sweep" data-active>
+        <div class="grouplabel">Flow</div>
+        <div class="row"><span class="name">Speed</span><span class="box">15.000</span><span class="unit">m/s</span></div>
+        <div class="row"><span class="name">Altitude</span><span class="box">100.000</span><span class="unit">m</span></div>
+
+        <div class="grouplabel">What goes into the mesh</div>
+        <div class="row"><span class="name">Scope</span><span class="box choice">aircraft ▾</span><span class="unit"></span></div>
+        <div class="row"><span class="name">Surface treatment</span><span class="box choice">thin — vortex lattice ▾</span><span class="unit"></span></div>
+        <div class="hint">Thick uses panels and is the only treatment that represents a fuselage. Much slower.</div>
+
+        <div class="grouplabel">Angles</div>
+        <div class="row"><span class="name">Alpha from</span><span class="box">−4.0</span><span class="unit">°</span></div>
+        <div class="row"><span class="name">Alpha to</span><span class="box">12.0</span><span class="unit">°</span></div>
+        <div class="row"><span class="name">Alpha points</span><span class="box blank">auto (17)</span><span class="unit"></span></div>
+        <div class="row"><span class="name">Beta from / to</span><span class="box">0.0</span><span class="unit">°</span></div>
+        <div class="row"><span class="name">Beta points</span><span class="box">1</span><span class="unit"></span></div>
+
+        <div class="grouplabel">Fidelity and sources</div>
+        <div class="row"><span class="name">Fidelity</span><span class="box choice">high ▾</span><span class="unit"></span></div>
+        <div class="row"><span class="name">Section source</span><span class="box choice">neuralfoil ▾</span><span class="unit"></span></div>
+        <div class="hint">XFoil is ground truth and worth spending on finalists; it can fail to converge.</div>
+
+        <div class="grouplabel">Reference values — blank takes them from the wing</div>
+        <div class="row"><span class="name">Sref</span><span class="box blank">from wing · 0.0720</span><span class="unit">m²</span></div>
+        <div class="row"><span class="name">bref</span><span class="box blank">from wing · 0.6000</span><span class="unit">m</span></div>
+        <div class="row"><span class="name">cref</span><span class="box blank">from wing · 0.1216</span><span class="unit">m</span></div>
+
+        <div class="footer">
+          <span class="cost">17 angles · one solve · <b>≈ 2 min</b> at high fidelity</span>
+          <button class="btn">Cancel</button>
+          <button class="btn primary">Run sweep</button>
+        </div>
+      </div>
+
+
+      <!-- ───── speed sweep ───── -->
+      <div class="panel" data-panel="speed">
+        <div class="grouplabel">Speeds to trim at</div>
+        <div class="row"><span class="name">From</span><span class="box">7.5</span><span class="unit">m/s</span></div>
+        <div class="row"><span class="name">To</span><span class="box">24.0</span><span class="unit">m/s</span></div>
+        <div class="row"><span class="name">Step</span><span class="box">1.0</span><span class="unit">m/s</span></div>
+
+        <div class="grouplabel">Reads</div>
+        <div class="row"><span class="name">Stated mass</span><span class="readout">0.600</span><span class="unit">kg</span></div>
+        <div class="row"><span class="name">Built from</span><span class="readout">alpha sweep · 12:04</span><span class="unit"></span></div>
+
+        <div class="banner" style="border-left-color: var(--good)">
+          <span class="lead" style="color: var(--good)">One solve.</span>
+          <span>The inviscid solution depends on lift coefficient, not Reynolds number, so the
+            alpha sweep already on file covers every speed. Only the viscous half is recomputed at
+            each speed's own Reynolds.</span>
+        </div>
+
+        <div class="footer">
+          <span class="cost">17 speeds · no solver · <b>instant</b></span>
+          <button class="btn">Cancel</button>
+          <button class="btn primary">Run speed sweep</button>
+        </div>
+      </div>
+
+      <!-- ───── stability ───── -->
+      <div class="panel" data-panel="stab">
+        <div class="grouplabel">Flow</div>
+        <div class="row"><span class="name">Speed</span><span class="box">15.000</span><span class="unit">m/s</span></div>
+        <div class="row"><span class="name">Altitude</span><span class="box">100.000</span><span class="unit">m</span></div>
+
+        <div class="grouplabel">Where the derivatives are measured</div>
+        <div class="row"><span class="name">Alpha</span><span class="box">−5.0</span><span class="unit">°</span></div>
+        <div class="row"><span class="name">Beta</span><span class="box">0.0</span><span class="unit">°</span></div>
+
+        <div class="banner">
+          <span class="lead">Off trim.</span>
+          <span>Level flight at 15 m/s and 0.60 kg needs <b>+5.6°</b>. Derivatives taken 10.6° away
+            describe a different aircraft, and the modes inherit that.</span>
+          <button>Use +5.6°</button>
+        </div>
+
+        <div class="grouplabel">Centre of gravity — moments are taken about this point</div>
+        <div class="row"><span class="name">CG x</span><span class="box">0.000</span><span class="unit">m</span></div>
+        <div class="row"><span class="name">CG y</span><span class="box">0.000</span><span class="unit">m</span></div>
+        <div class="row"><span class="name">CG z</span><span class="box">0.000</span><span class="unit">m</span></div>
+        <div class="row"><span class="name">Static margin here</span><span class="readout">76.3 %</span><span class="unit"></span></div>
+
+        <div class="banner">
+          <span class="lead">Check the CG.</span>
+          <span>76% of MAC puts the reference at the nose. A conventional aircraft sits at 5–15%.
+            Every longitudinal number depends on this.</span>
+        </div>
+
+        <div class="grouplabel">Method</div>
+        <div class="row"><span class="name">Surface treatment</span><span class="box choice">thin — vortex lattice ▾</span><span class="unit"></span></div>
+        <div class="row"><span class="name">Rate derivatives</span><span class="box choice">AVL cross-check ▾</span><span class="unit"></span></div>
+        <div class="hint">VSPAERO's own rate output fails a damping sign check, so AVL supplies Cm_q, Cl_p and Cn_r.</div>
+
+        <div class="footer">
+          <span class="cost">1 perturbed solve + AVL · <b>≈ 25 s</b></span>
+          <button class="btn">Cancel</button>
+          <button class="btn primary">Run stability</button>
+        </div>
+      </div>
+
+
+      <!-- ───── cg sweep ───── -->
+      <div class="panel" data-panel="cg">
+        <div class="grouplabel">CG positions to try</div>
+        <div class="row"><span class="name">From</span><span class="box">0.0196</span><span class="unit">m</span></div>
+        <div class="row"><span class="name">To</span><span class="box">0.1412</span><span class="unit">m</span></div>
+        <div class="row"><span class="name">Step</span><span class="box">0.0061</span><span class="unit">m</span></div>
+
+        <div class="grouplabel">Reads</div>
+        <div class="row"><span class="name">MAC</span><span class="readout">0.1216</span><span class="unit">m</span></div>
+        <div class="row"><span class="name">MAC leading edge, x</span><span class="readout">0.0196</span><span class="unit">m</span></div>
+        <div class="row"><span class="name">Neutral point</span><span class="readout">52 % MAC</span><span class="unit"></span></div>
+
+        <div class="banner" style="border-left-color: var(--good)">
+          <span class="lead" style="color: var(--good)">No solver.</span>
+          <span>The neutral point is a property of the shape, not of where the mass sits, so the
+            stability run already on file answers the whole curve. Moving the CG aft makes the
+            aircraft softer <em>and</em> better damped at once — where those cross is the choice
+            this sweep exists to show.</span>
+        </div>
+
+        <div class="footer">
+          <span class="cost">20 positions · no solver · <b>instant</b></span>
+          <button class="btn">Cancel</button>
+          <button class="btn primary">Run CG sweep</button>
+        </div>
+      </div>
+
+      <!-- ───── dynamics ───── -->
+      <div class="panel" data-panel="dyn">
+        <div class="grouplabel">Built from</div>
+        <div class="row"><span class="name">Derivatives</span><span class="readout">−5.0° · 12:04</span><span class="unit"></span></div>
+        <div class="row"><span class="name">Mass</span><span class="readout">0.600 kg</span><span class="unit"></span></div>
+        <div class="row"><span class="name">Inertia</span><span class="readout">estimated</span><span class="unit"></span></div>
+
+        <div class="banner">
+          <span class="lead">Estimated inertia.</span>
+          <span>Ixx, Iyy and Izz came from radii of gyration, not from weighing. Every frequency
+            scales with the square root of an inertia, so treat the modes as indicative.</span>
+        </div>
+
+        <div class="grouplabel">Trim</div>
+        <div class="row"><span class="name">Speed</span><span class="box">15.000</span><span class="unit">m/s</span></div>
+        <div class="row"><span class="name">Required CL</span><span class="readout">0.427</span><span class="unit"></span></div>
+        <div class="row"><span class="name">Trim alpha</span><span class="readout">+5.6 °</span><span class="unit"></span></div>
+
+        <div class="grouplabel">Report</div>
+        <div class="row"><span class="name">Time response</span><span class="box choice">elevator step ▾</span><span class="unit"></span></div>
+        <div class="row"><span class="name">Duration</span><span class="box">20.0</span><span class="unit">s</span></div>
+
+        <div class="footer">
+          <span class="cost">No solver — arithmetic on the last stability run · <b>instant</b></span>
+          <button class="btn">Cancel</button>
+          <button class="btn primary">Compute modes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="notes">
+    <div class="note">
+      <h3>Stability gets its own alpha</h3>
+      <p>Today the stability run silently reuses <code>alpha_start_deg</code>, the start of the
+        sweep range. That is why yours ran at −5°. Here it is a separate field, so the sweep can
+        cover −4…12 while the derivatives are taken at trim.</p>
+    </div>
+    <div class="note">
+      <h3>The trim warning is live</h3>
+      <p>The dialog knows the speed and the mass, so it can compute the trim incidence before you
+        spend two minutes. The button copies it into the alpha field.</p>
+    </div>
+    <div class="note">
+      <h3>Thin or thick, stated</h3>
+      <p><code>thick</code> exists in the schema and reaches no UI at all today. It is the closest
+        thing to "which kind of sweep": thin is vortex lattice, thick is panels and the only one
+        that gives a fuselage.</p>
+    </div>
+    <div class="note">
+      <h3>Cost before commitment</h3>
+      <p>Angle count times fidelity is a number the app already knows. Showing it turns "is this
+        frozen?" into "this takes two minutes".</p>
+    </div>
+    <div class="note">
+      <h3>Blank means inherited</h3>
+      <p>Reference values show what the wing would supply, greyed. You can see the number without
+        overriding it, and typing replaces it.</p>
+    </div>
+    <div class="note">
+      <h3>Speed sweep costs one solve</h3>
+      <p>Lift equals weight, so each speed fixes its own <code>CL</code>. The induced drag comes
+        from the existing polar; the profile drag is re-integrated at that speed's Reynolds. Out
+        comes best range and best endurance — and the second is always the slower of the two.</p>
+    </div>
+    <div class="note">
+      <h3>CG sweep costs nothing</h3>
+      <p>The neutral point does not move when the mass does, so one stability run gives the whole
+        curve of <code>SM = (X_np − x)/cref</code> and the modes at every position. It reports the
+        conventional band and a recommendation — and says that <code>Cm_q</code> is held, so the
+        margin stays exact while the damping degrades away from the solved CG.</p>
+    </div>
+    <div class="note">
+      <h3>What is not here</h3>
+      <p>Control deflections. They are in the schema and no solver reads them yet, so a field would
+        promise something that does nothing. Mode animation is not here either — it belongs beside
+        the modes, so it is a button on the Dynamics screen rather than a run to configure.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+  const segs = document.querySelectorAll(".seg");
+  segs.forEach(function (seg) {
+    seg.addEventListener("click", function () {
+      segs.forEach(function (s) { s.setAttribute("aria-selected", String(s === seg)); });
+      document.querySelectorAll(".panel").forEach(function (p) {
+        if (p.dataset.panel === seg.dataset.tab) { p.setAttribute("data-active", ""); }
+        else { p.removeAttribute("data-active"); }
+      });
+    });
+  });
+</script>
